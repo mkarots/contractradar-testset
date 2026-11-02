@@ -10,12 +10,14 @@ import json
 import os
 
 from .extract_llm import pdf_text
+from .sysdeps import require_tools
 
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cases", default="cases")
     args = ap.parse_args(argv)
+    require_tools("pdftotext", "tesseract")
     with open(os.path.join(args.cases, "manifest.json"), encoding="utf-8") as fh:
         manifest = json.load(fh)
     for c in manifest["cases"]:

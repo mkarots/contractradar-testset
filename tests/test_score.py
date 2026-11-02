@@ -3,7 +3,9 @@ import os
 import subprocess
 import sys
 
-from crtest import normalise, score
+import pytest
+
+from crtest import normalise, score, sysdeps
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -43,6 +45,9 @@ def test_gold_scores_100_percent(tmp_path):
 
 
 def test_naive_baseline_passes_clean_case():
+    missing = sysdeps.probe("pdftotext")
+    if missing:
+        pytest.skip(missing)
     r = subprocess.run([sys.executable, "-m", "crtest.extract_naive", "--cases", os.path.join(ROOT, "cases"), "--out", "/tmp/_naive_test.json"], cwd=ROOT, capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     s = score.score(os.path.join(ROOT, "cases"), "/tmp/_naive_test.json")

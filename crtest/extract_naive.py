@@ -19,6 +19,7 @@ import subprocess
 
 from .schema import FIELD_NAMES
 from .normalise import parse_date, parse_money, to_int
+from .sysdeps import require_tools
 
 NAME = "naive_text"
 VERSION = "0.1.0"
@@ -177,6 +178,7 @@ def main(argv=None) -> None:
     ap.add_argument("--cases", default="cases")
     ap.add_argument("--out", default="results/naive_text.json")
     args = ap.parse_args(argv)
+    require_tools("pdftotext")
     with open(os.path.join(args.cases, "manifest.json"), encoding="utf-8") as fh:
         manifest = json.load(fh)
     out = {"extractor": NAME, "version": VERSION, "run_at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

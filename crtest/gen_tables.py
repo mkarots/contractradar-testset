@@ -28,6 +28,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.platypus import Flowable, PageBreak, Paragraph, Spacer, Table, TableStyle
 
+from .sysdeps import require_tools
+
 from . import corpus
 from .render import MARGIN, PAGE_W, P, STYLES, build_pdf, esc
 
@@ -538,6 +540,7 @@ def main(argv=None) -> None:
     ap.add_argument("--out", default="tables")
     ap.add_argument("--only")
     args = ap.parse_args(argv)
+    require_tools("pdftoppm", "pdftotext")
     os.makedirs(args.out, exist_ok=True)
     metas = []
     for fn in CASES:

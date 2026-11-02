@@ -21,6 +21,7 @@ from reportlab.lib.units import mm
 from reportlab.platypus import FrameBreak, KeepTogether, NextPageTemplate, PageBreak, Spacer
 
 from . import corpus, pa2023
+from .sysdeps import require_tools
 from .render import (
     MARGIN, PAGE_W, P, build_pdf, data_table, fmt_cpv, fmt_date, fmt_money, kv_table_borderless_grouped,
     kv_table_grid, months_between, pdf_page_count, rasterise_to_scanned_pdf, signature_block, stacked_kv,
@@ -776,6 +777,7 @@ def main(argv=None) -> None:
     ap.add_argument("--only", help="comma-separated case ids")
     ap.add_argument("--no-images", action="store_true", help="skip page PNGs for the site")
     args = ap.parse_args(argv)
+    require_tools("pdftoppm")
     specs = build_specs()
     if args.only:
         keep = set(args.only.split(","))

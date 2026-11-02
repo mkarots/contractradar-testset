@@ -49,13 +49,16 @@ should raise, and a scorer. Built for the [ContractRadar pilot](https://discord.
 
 ## Quick start
 
+Regenerating documents (`make cases`) and re-running the naive extraction (`make naive`) need Poppler (`pdftotext`, `pdftoppm`): `brew install poppler` on macOS, `sudo apt-get install poppler-utils` on Debian/Ubuntu. Tesseract is only for `make text` and `extract_llm --ocr`.
+
 ```bash
-pip install -r requirements.txt       # reportlab, pypdf, Pillow
-# system tools: poppler-utils (pdftotext, pdftoppm); tesseract-ocr only for --ocr
+make install      # creates .venv and installs the Python packages
 make cases        # regenerate PDFs, gold labels, page images
 make naive        # run the naive baseline and score it
 make site         # build site/dist
 ```
+
+`make` uses `.venv/bin/python` when that file exists, so you do not need to activate the venv. `make install` does not install Poppler. `make cases` and `make naive` stop and print the install command when it is missing.
 
 Score your own extractor: write predictions as
 
@@ -95,8 +98,8 @@ scorer and shown in the community table on the site ([details](https://contractr
 Community rows are self-reported: the gold labels ship with the cases, so that table is an honour-system comparison of
 methods. Rows in the curated table come from pull requests that add `results/<name>.json` and its `.scored.json`.
 
-Run the backend yourself with `pip install -r requirements-server.txt && make serve`; `deploy/setup-server.sh` and
-`deploy/contractradar-mcp.service` are the production setup behind nginx.
+Run the backend yourself with `make serve`. That installs `requirements-server.txt` into `.venv` and starts the server.
+`deploy/setup-server.sh` and `deploy/contractradar-mcp.service` are the production setup behind nginx.
 
 ## Tables track
 
@@ -106,12 +109,14 @@ milestone schedule with one row split by the page break (TB-003), and a borderle
 group headings and one of whose weeks runs over the page (TB-004). Each has `document.pdf`, `expected.csv`, `wrong.csv`
 (the naive text-dump extraction), `notes.md`, `spec.json` and the page images.
 
+Run `make install` first. Regenerating the PDFs needs Poppler, the same packages as `make cases`.
+
 ```bash
-python -m crtest.gen_tables --out tables                                   # regenerate (needs reportlab)
+.venv/bin/python -m crtest.gen_tables --out tables                         # regenerate (reportlab is in .venv)
 python -m crtest.extract_tables_naive                                      # wrong.csv + results_tables/naive_text.json
 python -m crtest.extract_tables_llm --out results_tables/my_model.json --prompt guided
 python -m crtest.score_tables --pred results_tables/my_model.json          # or a directory of TB-00N.csv files
-python -m crtest.extract_tables_tools --tables tables --out /tmp/tools     # pdfplumber / PyMuPDF baselines (optional deps)
+.venv/bin/python -m crtest.extract_tables_tools --tables tables --out /tmp/tools  # pdfplumber / PyMuPDF baselines (optional; install those into .venv)
 ```
 
 Cell score = right cells / ((expected rows + invented rows) x columns), so invented rows cost as much as wrong ones; cell

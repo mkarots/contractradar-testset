@@ -23,8 +23,8 @@ is deleted automatically) and a disk-space floor. Client addresses live in memor
 runs without an access log. Hide a row by adding its submission id to <store>/hidden.txt (one per line, read on every
 request); hidden rows are moved to <store>/archive/ when the table is full, and identical resubmissions are refused.
 
-Run:  python -m crtest.server --root /var/www/contractradar-testset --store /var/lib/contractradar/submissions --port 8765
-Needs: pip install -r requirements-server.txt
+Run:  make serve
+That installs requirements-server.txt into .venv and starts this module. Production uses deploy/setup-server.sh.
 """
 from __future__ import annotations
 
